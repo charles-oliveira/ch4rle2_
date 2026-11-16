@@ -3,49 +3,165 @@ import { SITE } from '../config';
 ---
 
 <footer id="links" class="section footer">
-  <h2 class="section-title">links</h2>
-  <ul class="links-list">
-    {
-      SITE.links.map((link) => (
-        <li>
-          <a
-            href={link.href}
-            target={link.href.startsWith('http') ? '_blank' : undefined}
-            rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-          >
-            {link.label}
-          </a>
-        </li>
-      ))
-    }
-  </ul>
+  <div class="footer-top">
+    <div class="footer-links-wrap">
+      <h2 class="section-title">links</h2>
+      <ul class="links-list">
+        {
+          SITE.links.map((link) => {
+            const isExternal = link.href.startsWith('http');
+            return (
+              <li>
+                <a
+                  href={link.href}
+                  target={isExternal ? '_blank' : undefined}
+                  rel={isExternal ? 'noopener noreferrer' : undefined}
+                >
+                  <span>{link.label}</span>
+                  <span class="link-glyph" aria-hidden="true">
+                    {isExternal ? '↗' : '->'}
+                  </span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
 
-  <pre class="ascii-sig" aria-hidden="true">+--- {SITE.name} · feito com texto puro &amp; astro ---+</pre>
+    <a href="#top" class="top-link">
+      <span aria-hidden="true">↑</span>
+      <span>topo</span>
+    </a>
+  </div>
+
+  <div class="footer-bottom">
+    <span class="ascii-sig">+--- {SITE.name} · texto puro &amp; astro ---+</span>
+    <span class="footer-meta">0 cookies · estático</span>
+  </div>
 </footer>
 
 <style>
+  .footer {
+    padding-block-end: 0.5rem;
+  }
+
+  .footer-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1.25rem 2rem;
+    margin-block-end: 1.5rem;
+  }
+
+  .footer-links-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-inline-size: 0;
+  }
+
   .links-list {
     list-style: none;
     padding: 0;
-    margin: 0 0 1.75rem;
+    margin: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem 1.35rem;
+    flex-wrap: balance;
+    gap: 0.5rem 0.65rem;
   }
 
-  .links-list a {
+  .links-list a,
+  .top-link {
     display: inline-flex;
     align-items: center;
+    gap: 0.45rem;
     min-block-size: var(--target-size);
+    padding: 0.3rem 0.75rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink-primary);
+    box-shadow: 0 1px 2px var(--shadow-soft);
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .top-link {
+    background: var(--bg-surface);
+    color: var(--ink-secondary);
+  }
+
+  .links-list a:hover,
+  .top-link:hover {
+    background: var(--ink-primary);
+    border-color: var(--ink-primary);
+    color: var(--bg-paper);
+  }
+
+  .link-glyph {
+    font-size: 0.85em;
+    color: var(--ink-muted);
+    transition: color 0.15s ease;
+  }
+
+  .links-list a:hover .link-glyph {
+    color: var(--bg-paper);
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.4rem 1rem;
+    padding-block-start: 1rem;
+    border-block-start: 1px solid var(--border-subtle);
   }
 
   .ascii-sig {
-    margin: 0;
     font-family: var(--font-mono);
-    font-size: clamp(0.68rem, 2.5vw, 0.8rem);
+    font-size: clamp(0.72rem, 2.4vw, 0.8rem);
     color: var(--ink-muted);
-    white-space: pre-wrap;
     overflow-wrap: anywhere;
   }
-</style>
 
+  .footer-meta {
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .links-list a,
+    .top-link {
+      transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease,
+        translate 0.35s var(--ease-spring),
+        scale 0.3s var(--ease-spring);
+    }
+
+    .link-glyph {
+      transition: color 0.15s ease, translate 0.3s var(--ease-spring);
+    }
+
+    .links-list a:hover,
+    .top-link:hover {
+      translate: 0 -2px;
+    }
+
+    .links-list a:hover .link-glyph {
+      translate: 2px -1px;
+    }
+
+    .links-list a:active,
+    .top-link:active {
+      scale: 0.96;
+    }
+  }
+</style>

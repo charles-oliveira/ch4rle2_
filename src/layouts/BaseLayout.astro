@@ -16,13 +16,27 @@ const { title = SITE.title, description = SITE.description } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content={description} />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
+    <script is:inline>
+      try {
+        var savedTheme = localStorage.getItem('ch4rle2-theme');
+        if (savedTheme === 'komorebi' || savedTheme === 'star-wars' || savedTheme === 'ran') {
+          document.documentElement.dataset.theme = savedTheme;
+        } else {
+          document.documentElement.dataset.theme = 'komorebi';
+        }
+      } catch (e) {
+        document.documentElement.dataset.theme = 'komorebi';
+      }
+    </script>
+    <meta name="theme-color" content="#f7f7f5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />
     <title>{title}</title>
   </head>
-  <body>
+  <body id="top">
+    <div class="scroll-progress" aria-hidden="true"></div>
     <main class="container">
       <slot />
     </main>
   </body>
 </html>
-

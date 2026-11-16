@@ -10,15 +10,21 @@ const { entry, showArchiveLink = false } = Astro.props;
 const { edicao, data, titulo, dicas } = entry.data;
 const formattedDate = data.toISOString().slice(0, 10);
 const paddedEdition = String(edicao).padStart(2, '0');
+const sectionId = showArchiveLink ? 'dicas' : `edicao-${edicao}`;
+const headingId = `dicas-heading-${edicao}`;
 ---
 
-<section id="dicas" class="section-plain" aria-labelledby="dicas-heading">
+<section
+  id={sectionId}
+  class:list={['section-plain', { 'is-archive-edition': !showArchiveLink }]}
+  aria-labelledby={headingId}
+>
   <div class="section-header">
-    <h2 id="dicas-heading" class="section-title">
+    <h2 id={headingId} class="section-title">
       5 de sexta · #{paddedEdition}
     </h2>
     <div class="picks-meta">
-      <time datetime={formattedDate} class="muted">{formattedDate}</time>
+      <time datetime={formattedDate} class="picks-date">{formattedDate}</time>
       {
         showArchiveLink && (
           <>
@@ -32,73 +38,79 @@ const paddedEdition = String(edicao).padStart(2, '0');
     </div>
   </div>
 
-  <div class="picks-sheet">
-    {titulo && <p class="picks-theme">{titulo}</p>}
+  {
+    titulo && (
+      <p class="picks-theme">
+        <span class="theme-label">tema:</span> {titulo}
+      </p>
+    )
+  }
 
-    <ol class="picks-list">
-      {
-        dicas.map((item, idx) => {
-          const num = String(idx + 1).padStart(2, '0');
-          return (
-            <li class="pick-slot">
-              <article class="pick-card">
-                {item.imagem && (
-                  <img
-                    src={item.imagem}
-                    alt={item.imagemAlt ?? item.titulo}
-                    width="400"
-                    height="300"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                )}
+  <ol class="picks-list">
+    {
+      dicas.map((item, idx) => {
+        const num = String(idx + 1).padStart(2, '0');
+        return (
+          <li class="pick-slot">
+            <article class="pick-card">
+              {item.imagem && (
+                <img
+                  src={item.imagem}
+                  alt={item.imagemAlt ?? item.titulo}
+                  width="400"
+                  height="300"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
 
-                <header class="pick-head">
-                  <span class="pick-index" aria-hidden="true">
-                    {num}
-                  </span>
-                  <span class="pick-tag">[{item.tipo}]</span>
-                  <h3 class="pick-title">
-                    {item.link ? (
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {item.titulo}
-                        <span class="ext-arrow" aria-hidden="true">
-                          {' '}↗
-                        </span>
-                      </a>
-                    ) : (
-                      item.titulo
-                    )}
-                  </h3>
-                </header>
+              <header class="pick-head">
+                <span class="pick-index" aria-hidden="true">
+                  {num}
+                </span>
+                <span class="pick-tag" data-tipo={item.tipo}>
+                  [{item.tipo}]
+                </span>
+                <h3 class="pick-title">
+                  {item.link ? (
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {item.titulo}
+                      <span class="ext-arrow" aria-hidden="true">
+                        {' '}↗
+                      </span>
+                    </a>
+                  ) : (
+                    item.titulo
+                  )}
+                </h3>
+              </header>
 
-                {(item.nota || item.citacao) && (
-                  <div class="pick-body">
-                    {item.nota && <p class="pick-note">{item.nota}</p>}
+              {(item.nota || item.citacao) && (
+                <div class="pick-body">
+                  {item.nota && <p class="pick-note">{item.nota}</p>}
 
-                    {item.citacao && (
-                      <figure class="pick-quote">
-                        <blockquote cite={item.link}>
-                          <p>“{item.citacao}”</p>
-                        </blockquote>
-                        {item.citacaoFonte && (
-                          <figcaption>— {item.citacaoFonte}</figcaption>
-                        )}
-                      </figure>
-                    )}
-                  </div>
-                )}
-              </article>
-            </li>
-          );
-        })
-      }
-    </ol>
-  </div>
+                  {item.citacao && (
+                    <figure class="pick-quote">
+                      <blockquote cite={item.link}>
+                        <p>“{item.citacao}”</p>
+                      </blockquote>
+                      {item.citacaoFonte && (
+                        <figcaption>— {item.citacaoFonte}</figcaption>
+                      )}
+                    </figure>
+                  )}
+                </div>
+              )}
+            </article>
+          </li>
+        );
+      })
+    }
+  </ol>
 </section>
 
 <style>
@@ -109,22 +121,30 @@ const paddedEdition = String(edicao).padStart(2, '0');
     font-size: 0.85rem;
   }
 
-  .archive-link {
-    font-size: 0.85rem;
+  .picks-date {
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
   }
 
-  .picks-sheet {
-    background: var(--bg-card);
-    border: 1px solid var(--border-ink);
-    padding: 1.25rem;
+  .archive-link {
+    font-size: 0.85rem;
+    font-weight: 500;
   }
 
   .picks-theme {
     margin-block: 0 1.25rem;
-    padding-block-end: 0.75rem;
-    border-bottom: 1px dashed var(--border-ink);
-    font-size: 0.92rem;
+    padding: 0.6rem 0.9rem;
+    background: var(--bg-surface);
+    border-radius: var(--radius-sm);
+    border-inline-start: 3px solid var(--accent);
+    font-size: 0.9rem;
+    color: var(--ink-primary);
+    max-inline-size: none;
+  }
+
+  .theme-label {
     color: var(--ink-muted);
+    font-weight: 600;
   }
 
   .picks-list {
@@ -133,20 +153,96 @@ const paddedEdition = String(edicao).padStart(2, '0');
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 1.35rem;
+    gap: 1.05rem;
   }
 
-  .pick-slot + .pick-slot {
-    padding-block-start: 1.35rem;
-    border-top: 1px dotted var(--border-ink);
+  .pick-slot {
+    container: pick-card / inline-size;
+  }
+
+  /* Staggered entrance animation (dynamic-sibling-animations) */
+  @media (prefers-reduced-motion: no-preference) {
+    .picks-list > .pick-slot {
+      --stagger-time: 70ms;
+      animation: rise-in 0.55s var(--ease-settle) both;
+    }
+
+    /* Literal time in @supports avoids var() always-true parsing */
+    @supports (animation-delay: calc(sibling-index() * 0.1s)) {
+      .picks-list > .pick-slot {
+        animation-delay: calc((sibling-index() - 1) * var(--stagger-time));
+      }
+    }
+
+    @supports not (animation-delay: calc(sibling-index() * 0.1s)) {
+      .picks-list > .pick-slot:nth-child(1) { animation-delay: 0ms; }
+      .picks-list > .pick-slot:nth-child(2) { animation-delay: 70ms; }
+      .picks-list > .pick-slot:nth-child(3) { animation-delay: 140ms; }
+      .picks-list > .pick-slot:nth-child(4) { animation-delay: 210ms; }
+      .picks-list > .pick-slot:nth-child(5) { animation-delay: 280ms; }
+    }
+
+    /* Scroll-driven entry reveal for stacked archive editions */
+    @supports ((animation-timeline: view()) and (animation-range: entry)) {
+      .is-archive-edition .picks-list > .pick-slot {
+        animation: scroll-card-in auto linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 28%;
+      }
+    }
+  }
+
+  @keyframes scroll-card-in {
+    from {
+      opacity: 0.15;
+      translate: 0 22px;
+      scale: 0.985;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+      scale: 1;
+    }
   }
 
   .pick-card {
-    container: pick-card / inline-size;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 0.7rem 1.1rem;
+    gap: 0.75rem 1.15rem;
     align-items: start;
+    padding: 1.15rem 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    corner-shape: squircle;
+    box-shadow: 0 1px 3px var(--shadow-soft);
+    transition: border-color 0.18s ease, box-shadow 0.22s ease;
+  }
+
+  .pick-card:has(.pick-title a:hover) {
+    border-color: var(--border-strong);
+    box-shadow:
+      0 3px 8px var(--shadow-soft),
+      0 14px 28px -12px var(--shadow-elevated);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pick-card {
+      transition:
+        border-color 0.18s ease,
+        box-shadow 0.35s var(--ease-spring),
+        translate 0.35s var(--ease-spring);
+    }
+
+    .pick-card:has(.pick-title a:hover) {
+      translate: 0 -2px;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .pick-card {
+      box-shadow: none;
+    }
   }
 
   .pick-card > img {
@@ -155,13 +251,15 @@ const paddedEdition = String(edicao).padStart(2, '0');
     block-size: auto;
     aspect-ratio: 4 / 3;
     object-fit: cover;
-    border: 1px solid var(--border-ink);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
     background: var(--bg-surface);
   }
 
-  @container pick-card (inline-size > 380px) {
+  /* Fallback for browsers without container queries */
+  @media (min-width: 560px) {
     .pick-card:has(> img) {
-      grid-template-columns: 9.25rem minmax(0, 1fr);
+      grid-template-columns: 8.5rem minmax(0, 1fr);
     }
 
     .pick-card:has(> img) > img {
@@ -169,12 +267,41 @@ const paddedEdition = String(edicao).padStart(2, '0');
       grid-row: 1 / span 2;
     }
 
-    .pick-card:has(> img) > .pick-head {
-      grid-column: 2;
-    }
-
+    .pick-card:has(> img) > .pick-head,
     .pick-card:has(> img) > .pick-body {
       grid-column: 2;
+    }
+  }
+
+  /* Size-aware override via container query */
+  @supports (container-type: inline-size) {
+    @media (min-width: 560px) {
+      .pick-card:has(> img) {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .pick-card:has(> img) > img,
+      .pick-card:has(> img) > .pick-head,
+      .pick-card:has(> img) > .pick-body {
+        grid-column: auto;
+        grid-row: auto;
+      }
+    }
+
+    @container pick-card (inline-size > 360px) {
+      .pick-card:has(> img) {
+        grid-template-columns: 8.5rem minmax(0, 1fr);
+      }
+
+      .pick-card:has(> img) > img {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+      }
+
+      .pick-card:has(> img) > .pick-head,
+      .pick-card:has(> img) > .pick-body {
+        grid-column: 2;
+      }
     }
   }
 
@@ -182,59 +309,85 @@ const paddedEdition = String(edicao).padStart(2, '0');
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 0.35rem 0.5rem;
+    gap: 0.4rem 0.55rem;
     min-inline-size: 0;
   }
 
   .pick-index {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--ink-muted);
+    font-size: 0.76rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--bg-paper);
+    background: var(--ink-primary);
+    padding: 0.1rem 0.45rem;
+    border-radius: var(--radius-sm);
     user-select: none;
   }
 
   .pick-tag {
-    font-size: 0.76rem;
-    color: var(--ink-muted);
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--ink-secondary);
     background: var(--bg-surface);
-    padding: 0.05rem 0.35rem;
-    border: 1px solid var(--border-ink);
+    padding: 0.08rem 0.45rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
     flex-shrink: 0;
+  }
+
+  @media (forced-colors: active) {
+    .pick-tag {
+      background: Canvas;
+      color: CanvasText;
+      border-color: CanvasText;
+    }
   }
 
   .pick-title {
     margin: 0;
     font-weight: 600;
-    font-size: 0.98rem;
-    line-height: 1.35;
+    font-size: 1rem;
+    line-height: 1.38;
     color: var(--ink-primary);
     overflow-wrap: anywhere;
   }
 
   .ext-arrow {
+    display: inline-block;
     font-weight: 400;
     font-size: 0.85em;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .ext-arrow {
+      transition: translate 0.3s var(--ease-spring);
+    }
+
+    .pick-title a:hover .ext-arrow {
+      translate: 2px -2px;
+    }
   }
 
   .pick-body {
     min-inline-size: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.7rem;
+    gap: 0.75rem;
   }
 
   .pick-note {
     margin: 0;
     font-size: 0.9rem;
-    color: var(--ink-muted);
-    line-height: 1.55;
+    color: var(--ink-secondary);
+    line-height: 1.58;
   }
 
   .pick-quote {
     margin: 0;
-    padding: 0.65rem 0.85rem;
+    padding: 0.7rem 0.95rem;
     background: var(--bg-surface);
-    border-inline-start: 2px solid var(--accent);
+    border-radius: var(--radius-sm);
+    border-inline-start: 3px solid var(--accent-cool);
   }
 
   .pick-quote blockquote {
@@ -246,7 +399,7 @@ const paddedEdition = String(edicao).padStart(2, '0');
     font-size: 0.88rem;
     font-style: italic;
     color: var(--ink-primary);
-    line-height: 1.5;
+    line-height: 1.52;
   }
 
   .pick-quote figcaption {

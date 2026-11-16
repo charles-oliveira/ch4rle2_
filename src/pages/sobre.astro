@@ -18,8 +18,8 @@ import { SITE } from '../config';
           <h2 id="sobre-heading" class="section-title">sobre</h2>
         </div>
 
-        <div class="paper-card">
-          <p>
+        <article class="paper-card">
+          <p class="bio-lead">
             Oi, eu sou o <strong>{SITE.name}</strong>. Este é o meu espaço
             pessoal na web para escrever com calma, juntar referências e
             compartilhar descobertas sem algoritmo no meio.
@@ -33,32 +33,45 @@ import { SITE } from '../config';
             (Edite este texto em <code>src/pages/sobre.astro</code> com a sua
             história, projetos e bio.)
           </p>
-        </div>
+        </article>
       </section>
 
       <section class="section" aria-labelledby="agora-heading">
         <div class="section-header">
           <h2 id="agora-heading" class="section-title">agora</h2>
-          <span class="muted">atualizado em 2026-11</span>
+          <span class="agora-date">2026-11</span>
         </div>
 
-        <ul class="bullet-list">
-          <li>
-            <strong>Escrevendo:</strong> notas periódicas na{' '}
-            <a href={SITE.substackUrl} target="_blank" rel="noopener noreferrer">
-              newsletter no Substack
-            </a>
-            .
-          </li>
-          <li>
-            <strong>Curando:</strong> a lista semanal{' '}
-            <a href="/dicas">5 de sexta</a> com livros, filmes, músicas e links.
-          </li>
-          <li>
-            <strong>Construindo:</strong> este site estático em Astro com
-            estética de papel e arte ASCII.
-          </li>
-        </ul>
+        <dl class="now-card">
+          <div class="now-row">
+            <dt>escrevendo</dt>
+            <dd>
+              Notas periódicas na{' '}
+              <a
+                href={SITE.substackUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                newsletter no Substack
+              </a>
+              .
+            </dd>
+          </div>
+          <div class="now-row">
+            <dt>curando</dt>
+            <dd>
+              A lista semanal <a href="/dicas">5 de sexta</a> com livros,
+              filmes, músicas e links.
+            </dd>
+          </div>
+          <div class="now-row">
+            <dt>construindo</dt>
+            <dd>
+              Este site estático em Astro com estética editorial monocromática
+              e arte ASCII interativa.
+            </dd>
+          </div>
+        </dl>
       </section>
     </div>
 
@@ -68,26 +81,28 @@ import { SITE } from '../config';
           <h2 id="colophon-heading" class="section-title">colofão</h2>
         </div>
 
-        <div class="spec-box">
-          <dl class="spec-list">
-            <div class="spec-row">
-              <dt>motor</dt>
-              <dd>Astro (HTML estático)</dd>
-            </div>
-            <div class="spec-row">
-              <dt>newsletter</dt>
-              <dd>Substack via RSS</dd>
-            </div>
-            <div class="spec-row">
-              <dt>dicas</dt>
-              <dd>Markdown em <code>src/content/dicas/</code></dd>
-            </div>
-            <div class="spec-row">
-              <dt>rastreamento</dt>
-              <dd>nenhum (0 cookies)</dd>
-            </div>
-          </dl>
-        </div>
+        <dl class="spec-box">
+          <div class="spec-row">
+            <dt>motor</dt>
+            <dd>Astro (estático)</dd>
+          </div>
+          <div class="spec-row">
+            <dt>newsletter</dt>
+            <dd>Substack via RSS</dd>
+          </div>
+          <div class="spec-row">
+            <dt>dicas</dt>
+            <dd><code>src/content/dicas/</code></dd>
+          </div>
+          <div class="spec-row">
+            <dt>temas</dt>
+            <dd>komorebi · star wars · ran</dd>
+          </div>
+          <div class="spec-row">
+            <dt>rastreio</dt>
+            <dd>nenhum (0 cookies)</dd>
+          </div>
+        </dl>
       </section>
 
       <section class="section" aria-labelledby="atalhos-heading">
@@ -95,12 +110,12 @@ import { SITE } from '../config';
           <h2 id="atalhos-heading" class="section-title">por aqui</h2>
         </div>
 
-        <ul class="bullet-list">
+        <ul class="shortcut-list">
           <li>
             <a href="/">← voltar para a página inicial</a>
           </li>
           <li>
-            <a href="/dicas">ver todas as edições do 5 de sexta -&gt;</a>
+            <a href="/dicas">todas as edições do 5 de sexta -&gt;</a>
           </li>
           <li>
             <a href="/#newsletter">assinar a newsletter -&gt;</a>
@@ -114,71 +129,170 @@ import { SITE } from '../config';
 </BaseLayout>
 
 <style>
+  .agora-date {
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
   .paper-card,
-  .spec-box {
+  .now-card {
     background: var(--bg-card);
-    border: 1px solid var(--border-ink);
-    padding: 1.25rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    corner-shape: squircle;
+    box-shadow: 0 1px 3px var(--shadow-soft);
+    padding: 1.3rem;
+  }
+
+  .spec-box {
+    margin: 0;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    corner-shape: squircle;
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  @media (forced-colors: active) {
+    .paper-card,
+    .now-card {
+      box-shadow: none;
+    }
+  }
+
+  .paper-card p {
+    color: var(--ink-secondary);
+  }
+
+  .paper-card .bio-lead {
+    color: var(--ink-primary);
+    font-size: 1rem;
+  }
+
+  .paper-card strong {
+    color: var(--ink-primary);
   }
 
   .last-p {
     margin-block-end: 0;
-    font-size: 0.88rem;
+    font-size: 0.84rem;
+    color: var(--ink-muted);
   }
 
-  .bullet-list {
-    list-style: none;
-    padding: 0;
+  .now-card {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.9rem;
   }
 
-  .bullet-list li::before {
-    content: '+ ';
-    color: var(--accent);
+  .now-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem 1.25rem;
+    align-items: baseline;
+  }
+
+  @media (min-width: 520px) {
+    .now-row {
+      grid-template-columns: 7.25rem minmax(0, 1fr);
+    }
+  }
+
+  .now-row:not(:last-child) {
+    padding-block-end: 0.9rem;
+    border-block-end: 1px solid var(--border-subtle);
+  }
+
+  .now-row dt {
+    font-size: 0.8rem;
     font-weight: 600;
+    color: var(--ink-muted);
   }
 
-  .spec-list {
+  .now-row dd {
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    font-size: 0.92rem;
+    color: var(--ink-secondary);
   }
 
   .spec-row {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 0.25rem 1rem;
-    padding-block-end: 0.65rem;
-    border-bottom: 1px dotted var(--border-ink);
+    align-items: baseline;
+    gap: 0.2rem 0.75rem;
   }
 
-  .spec-row:last-child {
-    padding-block-end: 0;
-    border-bottom: 0;
+  .spec-row:not(:last-child) {
+    padding-block-end: 0.6rem;
+    border-block-end: 1px solid var(--border-subtle);
   }
 
-  dt {
+  .spec-row dt {
     color: var(--ink-muted);
-    font-size: 0.88rem;
+    font-size: 0.82rem;
   }
 
-  dd {
+  .spec-row dd {
     margin: 0;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.84rem;
+    color: var(--ink-primary);
+    text-align: end;
   }
 
   code {
     font-family: var(--font-mono);
     font-size: 0.85em;
+    color: var(--ink-primary);
     background: var(--bg-surface);
-    padding: 0.1rem 0.3rem;
-    border: 1px solid var(--border-ink);
+    padding: 0.1rem 0.35rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .spec-box code {
+    background: var(--bg-card);
+  }
+
+  .shortcut-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .shortcut-list a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-size);
+    font-size: 0.88rem;
+    color: var(--ink-secondary);
+  }
+
+  .shortcut-list a:hover {
+    color: var(--ink-primary);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .paper-card,
+    .now-card {
+      animation: rise-in 0.5s var(--ease-settle) both;
+    }
+
+    .shortcut-list a {
+      transition: color 0.15s ease, translate 0.3s var(--ease-spring);
+    }
+
+    .shortcut-list a:hover {
+      translate: 4px 0;
+    }
   }
 </style>
-
