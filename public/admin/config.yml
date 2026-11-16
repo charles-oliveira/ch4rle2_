@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: ch4rle2/ch4rle2 # Troque para seu usuario/repositorio no GitHub
+  repo: charles-oliveira/ch4rle2_
   branch: main
 
 media_folder: public/images/dicas

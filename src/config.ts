@@ -9,7 +9,7 @@ export const SITE = {
   fetchLiveSubstack: false,
   links: [
     { label: 'substack', href: 'https://ch4rle2.substack.com' },
-    { label: 'github', href: 'https://github.com/ch4rle2' },
+    { label: 'github', href: 'https://github.com/charles-oliveira' },
     { label: 'rss', href: 'https://ch4rle2.substack.com/feed' },
     { label: 'email', href: 'mailto:oi@ch4rle2.dev' },
   ],
