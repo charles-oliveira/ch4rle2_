@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AsciiHero from '../components/AsciiHero.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../config';
+---
+
+<BaseLayout
+  title={`sobre — ${SITE.name}`}
+  description={`Sobre ${SITE.name}, projetos, o que estou fazendo agora e como este site funciona.`}
+>
+  <AsciiHero activePage="sobre" />
+
+  <div class="editorial-grid">
+    <div class="editorial-primary">
+      <section class="section-plain" aria-labelledby="sobre-heading">
+        <div class="section-header">
+          <h2 id="sobre-heading" class="section-title">sobre</h2>
+        </div>
+
+        <div class="paper-card">
+          <p>
+            Oi, eu sou o <strong>{SITE.name}</strong>. Este é o meu espaço
+            pessoal na web para escrever com calma, juntar referências e
+            compartilhar descobertas sem algoritmo no meio.
+          </p>
+          <p>
+            Interesso-me por software simples, interfaces diretas, ficção
+            científica, cinema, livros e ferramentas pequenas que respeitam o
+            tempo de quem usa.
+          </p>
+          <p class="muted last-p">
+            (Edite este texto em <code>src/pages/sobre.astro</code> com a sua
+            história, projetos e bio.)
+          </p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="agora-heading">
+        <div class="section-header">
+          <h2 id="agora-heading" class="section-title">agora</h2>
+          <span class="muted">atualizado em 2026-11</span>
+        </div>
+
+        <ul class="bullet-list">
+          <li>
+            <strong>Escrevendo:</strong> notas periódicas na{' '}
+            <a href={SITE.substackUrl} target="_blank" rel="noopener noreferrer">
+              newsletter no Substack
+            </a>
+            .
+          </li>
+          <li>
+            <strong>Curando:</strong> a lista semanal{' '}
+            <a href="/dicas">5 de sexta</a> com livros, filmes, músicas e links.
+          </li>
+          <li>
+            <strong>Construindo:</strong> este site estático em Astro com
+            estética de papel e arte ASCII.
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <aside class="editorial-secondary" aria-label="Ficha técnica e atalhos">
+      <section class="section-plain" aria-labelledby="colophon-heading">
+        <div class="section-header">
+          <h2 id="colophon-heading" class="section-title">colofão</h2>
+        </div>
+
+        <div class="spec-box">
+          <dl class="spec-list">
+            <div class="spec-row">
+              <dt>motor</dt>
+              <dd>Astro (HTML estático)</dd>
+            </div>
+            <div class="spec-row">
+              <dt>newsletter</dt>
+              <dd>Substack via RSS</dd>
+            </div>
+            <div class="spec-row">
+              <dt>dicas</dt>
+              <dd>Markdown em <code>src/content/dicas/</code></dd>
+            </div>
+            <div class="spec-row">
+              <dt>rastreamento</dt>
+              <dd>nenhum (0 cookies)</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="atalhos-heading">
+        <div class="section-header">
+          <h2 id="atalhos-heading" class="section-title">por aqui</h2>
+        </div>
+
+        <ul class="bullet-list">
+          <li>
+            <a href="/">← voltar para a página inicial</a>
+          </li>
+          <li>
+            <a href="/dicas">ver todas as edições do 5 de sexta -&gt;</a>
+          </li>
+          <li>
+            <a href="/#newsletter">assinar a newsletter -&gt;</a>
+          </li>
+        </ul>
+      </section>
+    </aside>
+  </div>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .paper-card,
+  .spec-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-ink);
+    padding: 1.25rem;
+  }
+
+  .last-p {
+    margin-block-end: 0;
+    font-size: 0.88rem;
+  }
+
+  .bullet-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .bullet-list li::before {
+    content: '+ ';
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .spec-list {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .spec-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    padding-block-end: 0.65rem;
+    border-bottom: 1px dotted var(--border-ink);
+  }
+
+  .spec-row:last-child {
+    padding-block-end: 0;
+    border-bottom: 0;
+  }
+
+  dt {
+    color: var(--ink-muted);
+    font-size: 0.88rem;
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: var(--bg-surface);
+    padding: 0.1rem 0.3rem;
+    border: 1px solid var(--border-ink);
+  }
+</style>
+

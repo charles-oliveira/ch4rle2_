@@ -1,0 +1,341 @@
+---
+import { SITE } from '../config';
+import { getNewsletterIssues } from '../lib/substack';
+
+const { issues, isPlaceholder } = await getNewsletterIssues(5);
+const subscribeUrl = `${SITE.substackUrl}/subscribe`;
+---
+
+<section id="newsletter" class="section-plain" aria-labelledby="newsletter-heading">
+  <div class="section-header">
+    <h2 id="newsletter-heading" class="section-title">newsletter</h2>
+  </div>
+
+  <div class="ascii-box">
+    <p class="box-intro">
+      Escrevo periodicamente no <strong>Substack</strong> sobre código,
+      produtos simples e coisas que estou testando. Sem spam.
+    </p>
+
+    <form
+      id="newsletter-form"
+      class="subscribe-form"
+      action={subscribeUrl}
+      method="GET"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <div class="field">
+        <label for="newsletter-email">Seu e-mail</label>
+        <span id="email-hint" class="hint">Formato: voce@exemplo.com</span>
+        <div class="input-row">
+          <div class="input-wrap">
+            <input
+              type="email"
+              id="newsletter-email"
+              name="email"
+              required
+              autocomplete="email"
+              autocorrect="off"
+              autocapitalize="none"
+              spellcheck="false"
+              enterkeyhint="done"
+              placeholder="voce@exemplo.com"
+              aria-describedby="email-hint"
+              data-error="email-error"
+              aria-invalid="false"
+            />
+            <div id="email-error" class="error-msg">
+              <span role="img" aria-label="Erro">!</span> Digite um e-mail válido no formato voce@exemplo.com.
+            </div>
+          </div>
+          <button type="submit" class="submit-btn">[ assinar ]</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div id="edicoes" class="issues">
+    <h3 class="issues-heading">
+      últimas edições
+      {isPlaceholder && <span class="badge">(exemplo)</span>}
+    </h3>
+
+    <ul class="issues-list">
+      {
+        issues.map((issue) => (
+          <li class="issue-item">
+            <time datetime={issue.date} class="issue-date">
+              {issue.date}
+            </time>
+            <a
+              href={issue.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="issue-link"
+            >
+              {issue.title}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="all-issues">
+      <a href={SITE.substackUrl} target="_blank" rel="noopener noreferrer">
+        ver arquivo completo no Substack -&gt;
+      </a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .ascii-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-ink);
+    padding: 1.25rem;
+    margin-block-end: 2rem;
+  }
+
+  .box-intro {
+    margin-block-end: 1.15rem;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  label {
+    display: inline-block;
+    font-weight: 600;
+    font-size: 0.92rem;
+    padding: 6px 0;
+    margin: -6px 0 0.25rem;
+  }
+
+  .hint {
+    display: block;
+    color: var(--ink-muted);
+    font-size: 0.82rem;
+    margin-block-end: 0.5rem;
+  }
+
+  .input-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    align-items: flex-start;
+  }
+
+  .input-wrap {
+    flex: 1 1 13rem;
+    min-inline-size: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  input[type='email'] {
+    font: inherit;
+    font-size: max(1rem, 1em);
+    width: 100%;
+    min-height: 48px;
+    padding: 0.65rem 0.75rem;
+    color: var(--ink-primary);
+    background: var(--bg-paper);
+    border: 1px solid var(--border-strong);
+    border-radius: 2px;
+  }
+
+  input[type='email']:is(:user-invalid, .user-invalid-fallback) {
+    border-color: var(--error);
+    background-color: var(--error-bg);
+  }
+
+  input[type='email']:user-valid {
+    border-color: var(--success);
+  }
+
+  .error-msg {
+    display: none;
+    color: var(--error);
+    font-size: 0.85rem;
+    margin-block-start: 0.35rem;
+  }
+
+  input[type='email']:is(:user-invalid, .user-invalid-fallback) + .error-msg {
+    display: block;
+  }
+
+  .submit-btn {
+    font: inherit;
+    font-size: max(1rem, 1em);
+    font-weight: 600;
+    min-height: 48px;
+    padding: 0.65rem 1.1rem;
+    color: var(--bg-paper);
+    background: var(--ink-primary);
+    border: 1px solid var(--ink-primary);
+    border-radius: 2px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .submit-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  @media (pointer: coarse) {
+    input[type='email'],
+    .submit-btn {
+      min-height: 52px;
+    }
+  }
+
+  .issues-heading {
+    font-size: 0.95rem;
+    color: var(--ink-muted);
+    font-weight: 600;
+    margin-block-end: 0.9rem;
+  }
+
+  .badge {
+    font-weight: 400;
+    font-size: 0.82rem;
+  }
+
+  .issues-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .issue-item {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    align-items: baseline;
+  }
+
+  .issue-date {
+    color: var(--ink-muted);
+    font-size: 0.88rem;
+    flex-shrink: 0;
+  }
+
+  .all-issues {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+</style>
+
+<script>
+  const form = document.getElementById('newsletter-form') as HTMLFormElement | null;
+  const emailInput = document.getElementById('newsletter-email') as HTMLInputElement | null;
+
+  if (form && emailInput) {
+    const linkError = (el: HTMLInputElement, shown: boolean) => {
+      const errorId = el.dataset.error;
+      if (!errorId) return;
+      const ids = (el.getAttribute('aria-describedby') || '')
+        .split(/\s+/)
+        .filter((id) => id && id !== errorId);
+      if (shown) ids.push(errorId);
+      if (ids.length) el.setAttribute('aria-describedby', ids.join(' '));
+      else el.removeAttribute('aria-describedby');
+    };
+
+    const announcer = document.createElement('div');
+    announcer.setAttribute('aria-live', 'polite');
+    announcer.classList.add('visually-hidden');
+    document.body.append(announcer);
+    let announceTimer: number | undefined;
+
+    const spokenText = (node: HTMLElement) => {
+      const copy = node.cloneNode(true) as HTMLElement;
+      copy.querySelectorAll('[aria-hidden="true"]').forEach((n) => n.remove());
+      copy
+        .querySelectorAll('[role="img"][aria-label]')
+        .forEach((n) => n.replaceWith(`${n.getAttribute('aria-label')}: `));
+      return (copy.textContent || '').replace(/\s+/g, ' ').trim();
+    };
+
+    const announceError = (el: HTMLInputElement) => {
+      const errorId = el.dataset.error;
+      if (!errorId) return;
+      const error = document.getElementById(errorId);
+      if (!error) return;
+      const label = el.labels?.[0] ? `${spokenText(el.labels[0])}: ` : '';
+      window.clearTimeout(announceTimer);
+      announcer.textContent = '';
+      announceTimer = window.setTimeout(() => {
+        announcer.textContent = label + spokenText(error);
+      }, 500);
+    };
+
+    const supportsUserInvalid = CSS.supports('selector(:user-invalid)');
+    let hasInteracted = false;
+    let hasBlurred = false;
+    let announcedCurrentError = false;
+
+    const syncAria = (announce = false) => {
+      const invalid = supportsUserInvalid
+        ? emailInput.matches(':user-invalid')
+        : (hasBlurred || emailInput.classList.contains('user-invalid-fallback')) &&
+          !emailInput.validity.valid;
+
+      if (!supportsUserInvalid && (hasBlurred || hasInteracted)) {
+        emailInput.classList.toggle('user-invalid-fallback', !emailInput.validity.valid);
+      }
+
+      if (invalid) {
+        if (announce && !announcedCurrentError) {
+          announceError(emailInput);
+          announcedCurrentError = true;
+        }
+        emailInput.setAttribute('aria-invalid', 'true');
+        linkError(emailInput, true);
+      } else {
+        emailInput.setAttribute('aria-invalid', 'false');
+        linkError(emailInput, false);
+        announcedCurrentError = false;
+        window.clearTimeout(announceTimer);
+        announcer.textContent = '';
+      }
+    };
+
+    emailInput.addEventListener('blur', () => {
+      hasBlurred = true;
+      if (hasInteracted) syncAria(true);
+    });
+
+    emailInput.addEventListener('input', () => {
+      hasInteracted = true;
+      if (emailInput.hasAttribute('aria-invalid')) syncAria(false);
+    });
+
+    emailInput.addEventListener('invalid', () => {
+      hasInteracted = true;
+      hasBlurred = true;
+      announcedCurrentError = true;
+      if (!supportsUserInvalid) {
+        emailInput.classList.add('user-invalid-fallback');
+      }
+      syncAria(false);
+    });
+
+    form.addEventListener('reset', () => {
+      hasInteracted = false;
+      hasBlurred = false;
+      announcedCurrentError = false;
+      emailInput.classList.remove('user-invalid-fallback');
+      window.setTimeout(() => syncAria(false));
+    });
+  }
+</script>
+

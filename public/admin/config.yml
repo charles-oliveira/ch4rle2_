@@ -1,0 +1,43 @@
+backend:
+  name: github
+  repo: ch4rle2/ch4rle2 # Troque para seu usuario/repositorio no GitHub
+  branch: main
+
+media_folder: public/images/dicas
+public_folder: /images/dicas
+
+collections:
+  - name: dicas
+    label: 5 de sexta
+    folder: src/content/dicas
+    create: true
+    slug: "{{fields.data}}"
+    summary: "#{{edicao}} — {{data}} ({{titulo}})"
+    sortable_fields:
+      fields: ["data", "edicao"]
+      default:
+        field: "data"
+        direction: "Descending"
+    fields:
+      - { label: "Edição (#)", name: "edicao", widget: "number", value_type: "int", min: 1 }
+      - { label: "Data da sexta-feira", name: "data", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+      - { label: "Tema da semana", name: "titulo", widget: "string", required: false }
+      - label: "As 5 dicas"
+        name: "dicas"
+        widget: "list"
+        min: 1
+        max: 5
+        summary: "[{{fields.tipo}}] {{fields.titulo}}"
+        fields:
+          - label: "Categoria"
+            name: "tipo"
+            widget: "select"
+            options: ["livro", "filme", "serie", "musica", "artigo", "video", "ferramenta", "outro"]
+          - { label: "Título", name: "titulo", widget: "string" }
+          - { label: "Imagem / Capa", name: "imagem", widget: "image", required: false }
+          - { label: "Descrição da imagem (alt)", name: "imagemAlt", widget: "string", required: false }
+          - { label: "Comentário / Nota", name: "nota", widget: "text", required: false }
+          - { label: "Citação", name: "citacao", widget: "text", required: false }
+          - { label: "Fonte da citação", name: "citacaoFonte", widget: "string", required: false }
+          - { label: "Link externo", name: "link", widget: "string", required: false }
+

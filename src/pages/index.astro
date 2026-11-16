@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AsciiHero from '../components/AsciiHero.astro';
+import FivePicks from '../components/FivePicks.astro';
+import NewsletterBox from '../components/NewsletterBox.astro';
+import Footer from '../components/Footer.astro';
+
+const allDicas = (await getCollection('dicas')).sort(
+  (a, b) => b.data.data.getTime() - a.data.data.getTime()
+);
+const latestDica = allDicas[0];
+---
+
+<BaseLayout>
+  <AsciiHero activePage="home" />
+
+  <div class="editorial-grid">
+    <div class="editorial-primary">
+      {latestDica && <FivePicks entry={latestDica} showArchiveLink={true} />}
+    </div>
+
+    <div class="editorial-secondary">
+      <NewsletterBox />
+    </div>
+  </div>
+
+  <Footer />
+</BaseLayout>

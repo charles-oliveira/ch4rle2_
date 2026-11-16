@@ -1,0 +1,44 @@
+---
+import { SITE } from '../config';
+---
+
+<footer id="links" class="section footer">
+  <h2 class="section-title">links</h2>
+  <ul class="links-list">
+    {
+      SITE.links.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            target={link.href.startsWith('http') ? '_blank' : undefined}
+            rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <pre class="ascii-sig" aria-hidden="true">+--- {SITE.name} · feito com texto puro &amp; astro ---+</pre>
+</footer>
+
+<style>
+  .links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+  }
+
+  .ascii-sig {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    overflow-x: auto;
+  }
+</style>
+

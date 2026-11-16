@@ -1,0 +1,257 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'dicas'>;
+  showArchiveLink?: boolean;
+}
+
+const { entry, showArchiveLink = false } = Astro.props;
+const { edicao, data, titulo, dicas } = entry.data;
+const formattedDate = data.toISOString().slice(0, 10);
+const paddedEdition = String(edicao).padStart(2, '0');
+---
+
+<section id="dicas" class="section-plain" aria-labelledby="dicas-heading">
+  <div class="section-header">
+    <h2 id="dicas-heading" class="section-title">
+      5 de sexta · #{paddedEdition}
+    </h2>
+    <div class="picks-meta">
+      <time datetime={formattedDate} class="muted">{formattedDate}</time>
+      {
+        showArchiveLink && (
+          <>
+            <span aria-hidden="true" class="muted">·</span>
+            <a href="/dicas" class="archive-link">
+              arquivo -&gt;
+            </a>
+          </>
+        )
+      }
+    </div>
+  </div>
+
+  <div class="picks-sheet">
+    {titulo && <p class="picks-theme">{titulo}</p>}
+
+    <ol class="picks-list">
+      {
+        dicas.map((item, idx) => {
+          const num = String(idx + 1).padStart(2, '0');
+          return (
+            <li class="pick-slot">
+              <article class="pick-card">
+                {item.imagem && (
+                  <img
+                    src={item.imagem}
+                    alt={item.imagemAlt ?? item.titulo}
+                    width="400"
+                    height="300"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
+
+                <header class="pick-head">
+                  <span class="pick-index" aria-hidden="true">
+                    {num}
+                  </span>
+                  <span class="pick-tag">[{item.tipo}]</span>
+                  <h3 class="pick-title">
+                    {item.link ? (
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {item.titulo}
+                        <span class="ext-arrow" aria-hidden="true">
+                          {' '}↗
+                        </span>
+                      </a>
+                    ) : (
+                      item.titulo
+                    )}
+                  </h3>
+                </header>
+
+                {(item.nota || item.citacao) && (
+                  <div class="pick-body">
+                    {item.nota && <p class="pick-note">{item.nota}</p>}
+
+                    {item.citacao && (
+                      <figure class="pick-quote">
+                        <blockquote cite={item.link}>
+                          <p>“{item.citacao}”</p>
+                        </blockquote>
+                        {item.citacaoFonte && (
+                          <figcaption>— {item.citacaoFonte}</figcaption>
+                        )}
+                      </figure>
+                    )}
+                  </div>
+                )}
+              </article>
+            </li>
+          );
+        })
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .picks-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .archive-link {
+    font-size: 0.85rem;
+  }
+
+  .picks-sheet {
+    background: var(--bg-card);
+    border: 1px solid var(--border-ink);
+    padding: 1.25rem;
+  }
+
+  .picks-theme {
+    margin-block: 0 1.25rem;
+    padding-block-end: 0.75rem;
+    border-bottom: 1px dashed var(--border-ink);
+    font-size: 0.92rem;
+    color: var(--ink-muted);
+  }
+
+  .picks-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+  }
+
+  .pick-slot + .pick-slot {
+    padding-block-start: 1.35rem;
+    border-top: 1px dotted var(--border-ink);
+  }
+
+  .pick-card {
+    container: pick-card / inline-size;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.7rem 1.1rem;
+    align-items: start;
+  }
+
+  .pick-card > img {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: 1px solid var(--border-ink);
+    background: var(--bg-surface);
+  }
+
+  @container pick-card (inline-size > 380px) {
+    .pick-card:has(> img) {
+      grid-template-columns: 9.25rem minmax(0, 1fr);
+    }
+
+    .pick-card:has(> img) > img {
+      grid-column: 1;
+      grid-row: 1 / span 2;
+    }
+
+    .pick-card:has(> img) > .pick-head {
+      grid-column: 2;
+    }
+
+    .pick-card:has(> img) > .pick-body {
+      grid-column: 2;
+    }
+  }
+
+  .pick-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.5rem;
+    min-inline-size: 0;
+  }
+
+  .pick-index {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-muted);
+    user-select: none;
+  }
+
+  .pick-tag {
+    font-size: 0.76rem;
+    color: var(--ink-muted);
+    background: var(--bg-surface);
+    padding: 0.05rem 0.35rem;
+    border: 1px solid var(--border-ink);
+    flex-shrink: 0;
+  }
+
+  .pick-title {
+    margin: 0;
+    font-weight: 600;
+    font-size: 0.98rem;
+    line-height: 1.35;
+    color: var(--ink-primary);
+    overflow-wrap: anywhere;
+  }
+
+  .ext-arrow {
+    font-weight: 400;
+    font-size: 0.85em;
+  }
+
+  .pick-body {
+    min-inline-size: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .pick-note {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ink-muted);
+    line-height: 1.55;
+  }
+
+  .pick-quote {
+    margin: 0;
+    padding: 0.65rem 0.85rem;
+    background: var(--bg-surface);
+    border-inline-start: 2px solid var(--accent);
+  }
+
+  .pick-quote blockquote {
+    margin: 0;
+  }
+
+  .pick-quote blockquote p {
+    margin: 0;
+    font-size: 0.88rem;
+    font-style: italic;
+    color: var(--ink-primary);
+    line-height: 1.5;
+  }
+
+  .pick-quote figcaption {
+    margin-block-start: 0.35rem;
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+  }
+</style>

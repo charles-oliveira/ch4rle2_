@@ -1,0 +1,887 @@
+---
+import { SITE } from '../config';
+
+interface Props {
+  activePage?: 'home' | 'dicas' | 'sobre';
+}
+
+const { activePage = 'home' } = Astro.props;
+const isHome = activePage === 'home';
+---
+
+<header class="hero">
+  <div class="hero-top">
+    <a
+      href="/sobre"
+      class="prompt"
+      aria-current={activePage === 'sobre' ? 'page' : undefined}
+    >
+      ~/ch4rle2
+    </a>
+
+    <div class="hero-controls">
+      <nav class="nav" aria-label="Navegação principal">
+        <a href="/" aria-current={activePage === 'home' ? 'page' : undefined}>
+          início
+        </a>
+        <span aria-hidden="true">·</span>
+        <a
+          href="/dicas"
+          aria-current={activePage === 'dicas' ? 'page' : undefined}
+        >
+          5 de sexta
+        </a>
+        <span aria-hidden="true">·</span>
+        <a href={isHome ? '#newsletter' : '/#newsletter'}>newsletter</a>
+        <span aria-hidden="true">·</span>
+        <a href="#links">links</a>
+      </nav>
+
+      <button
+        type="button"
+        id="ascii-toggle"
+        class="ascii-toggle"
+        aria-controls="ascii-stage"
+      >
+        [ pausar ]
+      </button>
+    </div>
+  </div>
+
+  <div id="ascii-stage" class="ascii-stage">
+    <canvas id="space-ascii" class="ascii-canvas" aria-hidden="true"></canvas>
+
+    <div class="hud-top" aria-hidden="true">
+      <span>+--- SECTOR // ANDORIA-04</span>
+      <span class="hud-hint">mova o cursor para pilotar</span>
+    </div>
+
+    <div class="ascii-brand">
+      <h1 class="visually-hidden">{SITE.name}</h1>
+      <a
+        href="/sobre"
+        class="ascii-brand-link"
+        aria-label="Sobre ch4rle2"
+        aria-current={activePage === 'sobre' ? 'page' : undefined}
+      >
+        <pre class="ascii-banner" aria-hidden="true">
+      _    _ _       _    ___ 
+  ___| |_ | | | _ __| |___|_  )
+ / __| ' \|_  _| '__| / -_)/ / 
+ \___|_||_| |_| |_|  |_\___/___|
+        </pre>
+        <span class="ascii-brand-hint" aria-hidden="true">sobre -&gt;</span>
+      </a>
+    </div>
+  </div>
+
+  <p class="tagline">
+    Notas sobre software, ideias e 5 dicas toda sexta.<span class="cursor" aria-hidden="true">_</span>
+  </p>
+</header>
+
+<style>
+  .hero {
+    margin-block-end: 0;
+  }
+
+  .hero-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    padding-block-end: 1rem;
+    margin-block-end: 1.25rem;
+    border-bottom: 1px solid var(--border-ink);
+    font-size: 0.88rem;
+  }
+
+  .prompt {
+    color: var(--ink-primary);
+    font-weight: 600;
+    text-decoration: none;
+    padding-block: 0.2rem;
+    border-bottom: 2px solid transparent;
+  }
+
+  .prompt:hover {
+    color: var(--accent);
+  }
+
+  .prompt[aria-current='page'] {
+    border-bottom-color: var(--accent);
+  }
+
+  .prompt[aria-current='page']::before {
+    content: '> ';
+    color: var(--accent);
+  }
+
+  .hero-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+  }
+
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 0.65rem;
+    color: var(--ink-muted);
+  }
+
+  .nav a {
+    color: var(--ink-muted);
+    text-decoration: none;
+    padding-block: 0.2rem;
+    border-bottom: 2px solid transparent;
+  }
+
+  .nav a:hover {
+    color: var(--ink-primary);
+  }
+
+  .nav a[aria-current='page'] {
+    color: var(--ink-primary);
+    font-weight: 600;
+    border-bottom-color: var(--accent);
+  }
+
+  .nav a[aria-current='page']::before {
+    content: '> ';
+    color: var(--accent);
+  }
+
+  .ascii-toggle {
+    font: inherit;
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+    background: transparent;
+    border: 1px solid var(--border-ink);
+    padding: 0.25rem 0.55rem;
+    min-block-size: 36px;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+
+  .ascii-toggle:hover {
+    color: var(--ink-primary);
+    border-color: var(--border-strong);
+    background: var(--bg-surface);
+  }
+
+  .ascii-stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-block-size: 16.5rem;
+    padding: 0.9rem 1.15rem 1rem;
+    margin-block-end: 1rem;
+    background: #10121a;
+    border: 1px solid var(--ink-primary);
+    box-shadow: 4px 4px 0 var(--border-ink);
+    overflow: hidden;
+    cursor: crosshair;
+  }
+
+  .ascii-canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    pointer-events: none;
+  }
+
+  .hud-top {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: rgba(130, 212, 238, 0.72);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hud-hint {
+    color: rgba(212, 168, 255, 0.62);
+  }
+
+  .ascii-brand {
+    position: relative;
+    z-index: 1;
+    align-self: flex-start;
+    margin-block-start: auto;
+  }
+
+  .ascii-brand-link {
+    display: inline-block;
+    padding: 0.35rem 0.65rem;
+    background: rgba(16, 18, 26, 0.78);
+    border-left: 2px solid #5ee4f5;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .ascii-brand-link:hover,
+  .ascii-brand-link[aria-current='page'] {
+    background: rgba(24, 28, 42, 0.92);
+    border-left-color: #f6b256;
+  }
+
+  .ascii-brand-hint {
+    display: block;
+    margin-block-start: 0.2rem;
+    font-size: 0.72rem;
+    color: rgba(94, 228, 245, 0.85);
+    letter-spacing: 0.04em;
+  }
+
+  .ascii-brand-link:hover .ascii-brand-hint,
+  .ascii-brand-link[aria-current='page'] .ascii-brand-hint {
+    color: #f6b256;
+  }
+
+  .ascii-banner {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: clamp(0.55rem, 1.8vw, 0.78rem);
+    line-height: 1.15;
+    color: #f5f1e6;
+    text-shadow: 0 0 8px rgba(94, 228, 245, 0.45);
+    user-select: none;
+  }
+
+  .tagline {
+    font-size: 1rem;
+    margin-block: 0;
+    color: var(--ink-primary);
+  }
+
+  .cursor {
+    display: inline-block;
+    margin-inline-start: 0.15em;
+    color: var(--accent);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cursor {
+      animation: blink 1.1s steps(1, end) infinite;
+    }
+  }
+
+  @keyframes blink {
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  const stageEl = document.getElementById('ascii-stage');
+  const canvasEl = document.getElementById(
+    'space-ascii'
+  ) as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('ascii-toggle');
+
+  if (stageEl && canvasEl && toggleBtn) {
+    const ctx = canvasEl.getContext('2d');
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    if (ctx) {
+      type Vec3 = [number, number, number];
+      type Tri = { a: number; b: number; c: number; kind: 'hull' | 'wing' | 'canopy' | 'nacelle' };
+
+      // Malha 3D híbrida: silhueta X-Wing / Cruzador Andoriano com asas em X e nacelas duplas
+      const vertices: Vec3[] = [
+        // Fuselagem (0..7)
+        [0, 0.05, 2.55],     // 0: ponta do nariz
+        [-0.3, 0.22, 0.7],   // 1: ombro esq sup
+        [0.3, 0.22, 0.7],    // 2: ombro dir sup
+        [-0.36, -0.18, 0.7], // 3: ombro esq inf
+        [0.36, -0.18, 0.7],  // 4: ombro dir inf
+        [-0.45, 0.26, -1.7], // 5: popa esq sup
+        [0.45, 0.26, -1.7],  // 6: popa dir sup
+        [-0.48, -0.22, -1.7],// 7: popa esq inf
+        [0.48, -0.22, -1.7], // 8: popa dir inf
+
+        // Cabine elevada (9..11)
+        [0, 0.56, 0.35],     // 9: topo frontal cabine
+        [-0.22, 0.48, -0.75],// 10: topo traseiro esq
+        [0.22, 0.48, -0.75], // 11: topo traseiro dir
+
+        // Asas X-Wing / Andorian superiores (12..19)
+        [-0.35, 0.16, -0.15],// 12: raiz sup esq frente
+        [-2.25, 0.85, -0.95],// 13: ponta sup esq frente
+        [-2.05, 0.8, -1.72], // 14: ponta sup esq tras
+        [-0.42, 0.2, -1.55], // 15: raiz sup esq tras
+
+        [0.35, 0.16, -0.15], // 16: raiz sup dir frente
+        [2.25, 0.85, -0.95], // 17: ponta sup dir frente
+        [2.05, 0.8, -1.72],  // 18: ponta sup dir tras
+        [0.42, 0.2, -1.55],  // 19: raiz sup dir tras
+
+        // Asas inferiores (20..27)
+        [-0.35, -0.12, -0.15],// 20
+        [-2.2, -0.78, -0.95], // 21
+        [-2.0, -0.72, -1.72], // 22
+        [-0.42, -0.16, -1.55],// 23
+
+        [0.35, -0.12, -0.15], // 24
+        [2.2, -0.78, -0.95],  // 25
+        [2.0, -0.72, -1.72],  // 26
+        [0.42, -0.16, -1.55], // 27
+
+        // Ponte/Anel Andoriano traseiro (28..31)
+        [-1.05, 0.65, -1.45], // 28
+        [1.05, 0.65, -1.45],  // 29
+        [1.05, 0.52, -1.85],  // 30
+        [-1.05, 0.52, -1.85], // 31
+      ];
+
+      const triangles: Tri[] = [
+        // Nariz
+        { a: 0, b: 1, c: 2, kind: 'hull' },
+        { a: 0, b: 2, c: 4, kind: 'hull' },
+        { a: 0, b: 4, c: 3, kind: 'hull' },
+        { a: 0, b: 3, c: 1, kind: 'hull' },
+
+        // Corpo central
+        { a: 1, b: 5, c: 6, kind: 'hull' },
+        { a: 1, b: 6, c: 2, kind: 'hull' },
+        { a: 3, b: 4, c: 8, kind: 'hull' },
+        { a: 3, b: 8, c: 7, kind: 'hull' },
+        { a: 1, b: 3, c: 7, kind: 'hull' },
+        { a: 1, b: 7, c: 5, kind: 'hull' },
+        { a: 2, b: 6, c: 8, kind: 'hull' },
+        { a: 2, b: 8, c: 4, kind: 'hull' },
+        { a: 5, b: 7, c: 8, kind: 'hull' },
+        { a: 5, b: 8, c: 6, kind: 'hull' },
+
+        // Cabine
+        { a: 1, b: 9, c: 2, kind: 'canopy' },
+        { a: 9, b: 10, c: 11, kind: 'canopy' },
+        { a: 1, b: 5, c: 10, kind: 'canopy' },
+        { a: 1, b: 10, c: 9, kind: 'canopy' },
+        { a: 2, b: 9, c: 11, kind: 'canopy' },
+        { a: 2, b: 11, c: 6, kind: 'canopy' },
+
+        // Asas superiores
+        { a: 12, b: 13, c: 14, kind: 'wing' },
+        { a: 12, b: 14, c: 15, kind: 'wing' },
+        { a: 16, b: 18, c: 17, kind: 'wing' },
+        { a: 16, b: 19, c: 18, kind: 'wing' },
+
+        // Asas inferiores
+        { a: 20, b: 22, c: 21, kind: 'wing' },
+        { a: 20, b: 23, c: 22, kind: 'wing' },
+        { a: 24, b: 25, c: 26, kind: 'wing' },
+        { a: 24, b: 26, c: 27, kind: 'wing' },
+
+        // Arco dorsal Andoriano
+        { a: 28, b: 29, c: 30, kind: 'nacelle' },
+        { a: 28, b: 30, c: 31, kind: 'nacelle' },
+      ];
+
+      // Pontos dos motores (em espaço local) para emitir rastros psicodélicos
+      const engines: Vec3[] = [
+        [-0.45, 0.14, -1.75],
+        [0.45, 0.14, -1.75],
+        [-2.0, 0.78, -1.72],
+        [2.0, 0.78, -1.72],
+        [-1.95, -0.7, -1.72],
+        [1.95, -0.7, -1.72],
+      ];
+
+      interface Star {
+        x: number;
+        y: number;
+        z: number;
+        hue: number;
+      }
+
+      const stars: Star[] = Array.from({ length: 75 }, (_, i) => ({
+        x: (((i * 73) % 200) - 100) / 38,
+        y: (((i * 137) % 200) - 100) / 60,
+        z: ((i * 29) % 100) / 10 + 0.5,
+        hue: (i * 0.17) % 1,
+      }));
+
+      interface ExhaustParticle {
+        x: number;
+        y: number;
+        z: number;
+        vx: number;
+        vy: number;
+        vz: number;
+        age: number;
+        hue: number;
+      }
+
+      const exhaust: ExhaustParticle[] = [];
+
+      let isPaused = motionQuery.matches;
+      let rafId: number | undefined;
+      let time = 0;
+      let lastFrameTime = 0;
+      let warpBoost = 0;
+
+      // Alvo do cursor para inclinar a nave suavemente
+      let pointerX = 0.2;
+      let pointerY = -0.1;
+      let smoothX = 0.2;
+      let smoothY = -0.1;
+
+      let width = 0;
+      let height = 0;
+      let cols = 0;
+      let rows = 0;
+      const cellW = 8.5;
+      const cellH = 14;
+
+      let zBuf = new Float32Array(0);
+      let charBuf: string[] = [];
+      let colorBuf: string[] = [];
+
+      const resize = () => {
+        const rect = stageEl.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = Math.max(1, Math.floor(rect.width));
+        height = Math.max(1, Math.floor(rect.height));
+
+        canvasEl.width = width * dpr;
+        canvasEl.height = height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        cols = Math.max(20, Math.floor(width / cellW));
+        rows = Math.max(10, Math.floor(height / cellH));
+
+        const total = cols * rows;
+        zBuf = new Float32Array(total);
+        charBuf = new Array(total);
+        colorBuf = new Array(total);
+
+        ctx.font =
+          '600 12px "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        renderFrame(0.016);
+      };
+
+      const hsl = (h: number, s: number, l: number, a = 1): string => {
+        const hue = (((h % 1) + 1) % 1) * 360;
+        return `hsla(${hue.toFixed(0)}, ${s}%, ${l}%, ${a.toFixed(2)})`;
+      };
+
+      const rotatePoint = (
+        p: Vec3,
+        yaw: number,
+        pitch: number,
+        roll: number
+      ): Vec3 => {
+        const [x0, y0, z0] = p;
+        // Roll (Z)
+        const cr = Math.cos(roll);
+        const sr = Math.sin(roll);
+        const x1 = x0 * cr - y0 * sr;
+        const y1 = x0 * sr + y0 * cr;
+        const z1 = z0;
+        // Pitch (X)
+        const cp = Math.cos(pitch);
+        const sp = Math.sin(pitch);
+        const y2 = y1 * cp - z1 * sp;
+        const z2 = y1 * sp + z1 * cp;
+        const x2 = x1;
+        // Yaw (Y)
+        const cy = Math.cos(yaw);
+        const sy = Math.sin(yaw);
+        const x3 = x2 * cy + z2 * sy;
+        const z3 = -x2 * sy + z2 * cy;
+        return [x3, y2, z3];
+      };
+
+      const project = (
+        p: Vec3,
+        centerX: number,
+        centerY: number,
+        scale: number
+      ): [number, number, number] => {
+        const dist = 6.2;
+        const z = p[2] + dist;
+        const invZ = 1 / Math.max(0.4, z);
+        const sx = centerX + p[0] * scale * invZ * 1.45;
+        const sy = centerY - p[1] * scale * invZ * 0.88;
+        return [sx, sy, invZ];
+      };
+
+      const putCell = (
+        c: number,
+        r: number,
+        invZ: number,
+        ch: string,
+        color: string
+      ) => {
+        if (c < 0 || c >= cols || r < 0 || r >= rows) return;
+        const idx = r * cols + c;
+        if (invZ > zBuf[idx]) {
+          zBuf[idx] = invZ;
+          charBuf[idx] = ch;
+          colorBuf[idx] = color;
+        }
+      };
+
+      const drawLine3D = (
+        p1: [number, number, number],
+        p2: [number, number, number],
+        ch: string,
+        color: string
+      ) => {
+        const dx = p2[0] - p1[0];
+        const dy = p2[1] - p1[1];
+        const steps = Math.max(1, Math.ceil(Math.max(Math.abs(dx), Math.abs(dy)) * 1.4));
+        for (let i = 0; i <= steps; i++) {
+          const t = i / steps;
+          const x = Math.round(p1[0] + dx * t);
+          const y = Math.round(p1[1] + dy * t);
+          const z = p1[2] + (p2[2] - p1[2]) * t + 0.002;
+          putCell(x, y, z, ch, color);
+        }
+      };
+
+      const shadeGlyphs = '.:-=+*#%@';
+
+      const renderFrame = (dt: number) => {
+        if (cols === 0 || rows === 0) return;
+
+        zBuf.fill(-1);
+        charBuf.fill(' ');
+        colorBuf.fill('');
+
+        // Suaviza inclinação pelo cursor
+        smoothX += (pointerX - smoothX) * 0.08;
+        smoothY += (pointerY - smoothY) * 0.08;
+        warpBoost = Math.max(0, warpBoost - dt * 1.6);
+
+        const shipCenterX = cols * (width >= 600 ? 0.6 : 0.54);
+        const shipCenterY = rows * 0.48;
+        const scale = Math.min(cols * 1.35, rows * 2.9);
+
+        // 1. Nebulosa psicodélica sutil nos cantos/ondas (mantendo bom espaço escuro)
+        for (let r = 0; r < rows; r++) {
+          const ny = r / rows;
+          for (let c = 0; c < cols; c++) {
+            const nx = c / cols;
+            const wave =
+              Math.sin(nx * 5.2 + time * 0.6 + Math.cos(ny * 4.2 - time * 0.4)) +
+              Math.cos((nx * 3.1 - ny * 4.8) + time * 0.5);
+            if (wave > 1.28) {
+              const intensity = Math.min(1, (wave - 1.28) / 0.72);
+              const hue = 0.52 + nx * 0.25 + Math.sin(time * 0.25 + ny * 3) * 0.14;
+              const ch = intensity > 0.65 ? '~' : intensity > 0.35 ? ':' : '·';
+              putCell(
+                c,
+                r,
+                0.001,
+                ch,
+                hsl(hue, 78, 62, 0.22 + intensity * 0.26)
+              );
+            }
+          }
+        }
+
+        // 2. Campo estelar 3D / Dobra Espacial Star Wars
+        const starSpeed = 3.2 + warpBoost * 16;
+        for (const st of stars) {
+          if (!isPaused) {
+            st.z -= dt * starSpeed;
+            if (st.z <= 0.35) {
+              st.z = 10.5;
+            }
+          }
+          const sx = Math.round(cols * 0.56 + (st.x / st.z) * cols * 0.52);
+          const sy = Math.round(rows * 0.48 - (st.y / st.z) * rows * 0.62);
+          if (sx >= 0 && sx < cols && sy >= 0 && sy < rows) {
+            const closeness = 1 - st.z / 10.5;
+            const ch =
+              warpBoost > 0.25
+                ? '='
+                : closeness > 0.72
+                  ? '*'
+                  : closeness > 0.42
+                    ? '+'
+                    : '·';
+            const starHue = (st.hue + time * 0.05) % 1;
+            putCell(
+              sx,
+              sy,
+              0.01 + closeness * 0.05,
+              ch,
+              hsl(starHue, 85, 72, 0.45 + closeness * 0.5)
+            );
+          }
+        }
+
+        // Orientação 3D da nave (atitude heróica + resposta ao cursor)
+        const yaw = -0.68 + Math.sin(time * 0.55) * 0.28 + smoothX * 0.55;
+        const pitch = 0.24 + Math.cos(time * 0.7) * 0.12 - smoothY * 0.45;
+        const roll = Math.sin(time * 0.65) * 0.26 - smoothX * 0.45;
+
+        const transformed = vertices.map((v) => rotatePoint(v, yaw, pitch, roll));
+        const projected = transformed.map((v) =>
+          project(v, shipCenterX, shipCenterY, scale)
+        );
+
+        // 3. Partículas psicodélicas dos propulsores Andorianos/X-Wing
+        if (!isPaused) {
+          for (let eIdx = 0; eIdx < engines.length; eIdx++) {
+            if (Math.random() < 0.75) {
+              const ep = rotatePoint(engines[eIdx], yaw, pitch, roll);
+              const dirVec = rotatePoint([0, 0, -1], yaw, pitch, roll);
+              exhaust.push({
+                x: ep[0],
+                y: ep[1],
+                z: ep[2],
+                vx: dirVec[0] * (3.2 + warpBoost * 4) + (Math.random() - 0.5) * 0.35,
+                vy: dirVec[1] * (3.2 + warpBoost * 4) + (Math.random() - 0.5) * 0.35,
+                vz: dirVec[2] * (3.2 + warpBoost * 4),
+                age: 0,
+                hue: (0.53 + eIdx * 0.08 + time * 0.12) % 1,
+              });
+            }
+          }
+        }
+
+        for (let i = exhaust.length - 1; i >= 0; i--) {
+          const pt = exhaust[i];
+          if (!isPaused) {
+            pt.x += pt.vx * dt;
+            pt.y += pt.vy * dt;
+            pt.z += pt.vz * dt;
+            pt.age += dt;
+          }
+          if (pt.age > 0.75) {
+            exhaust.splice(i, 1);
+            continue;
+          }
+          const [px, py, invZ] = project([pt.x, pt.y, pt.z], shipCenterX, shipCenterY, scale);
+          const life = 1 - pt.age / 0.75;
+          const ch = life > 0.7 ? '*' : life > 0.4 ? '~' : '·';
+          putCell(
+            Math.round(px),
+            Math.round(py),
+            invZ,
+            ch,
+            hsl(pt.hue, 92, 68, life * 0.9)
+          );
+        }
+
+        // 4. Rasterização dos triângulos da nave com sombreamento ASCII + cor Andoriana/psicodélica
+        const lightDir: Vec3 = [0.45, 0.72, 0.52];
+        const lightLen = Math.hypot(...lightDir);
+        const lx = lightDir[0] / lightLen;
+        const ly = lightDir[1] / lightLen;
+        const lz = lightDir[2] / lightLen;
+
+        for (const tri of triangles) {
+          const v0 = transformed[tri.a];
+          const v1 = transformed[tri.b];
+          const v2 = transformed[tri.c];
+
+          // Normal da face para iluminação
+          const ux = v1[0] - v0[0];
+          const uy = v1[1] - v0[1];
+          const uz = v1[2] - v0[2];
+          const vx = v2[0] - v0[0];
+          const vy = v2[1] - v0[1];
+          const vz = v2[2] - v0[2];
+
+          let nx = uy * vz - uz * vy;
+          let ny = uz * vx - ux * vz;
+          let nz = ux * vy - uy * vx;
+          const nLen = Math.hypot(nx, ny, nz) || 1;
+          nx /= nLen;
+          ny /= nLen;
+          nz /= nLen;
+
+          const p0 = projected[tri.a];
+          const p1 = projected[tri.b];
+          const p2 = projected[tri.c];
+
+          const minX = Math.max(0, Math.floor(Math.min(p0[0], p1[0], p2[0])));
+          const maxX = Math.min(cols - 1, Math.ceil(Math.max(p0[0], p1[0], p2[0])));
+          const minY = Math.max(0, Math.floor(Math.min(p0[1], p1[1], p2[1])));
+          const maxY = Math.min(rows - 1, Math.ceil(Math.max(p0[1], p1[1], p2[1])));
+
+          const area =
+            (p1[0] - p0[0]) * (p2[1] - p0[1]) -
+            (p1[1] - p0[1]) * (p2[0] - p0[0]);
+          if (Math.abs(area) < 0.001) continue;
+
+          const lum = Math.max(
+            0.15,
+            Math.min(1, Math.abs(nx * lx + ny * ly + nz * lz) * 0.85 + 0.15)
+          );
+          const glyph =
+            shadeGlyphs[Math.min(shadeGlyphs.length - 1, Math.floor(lum * shadeGlyphs.length))];
+
+          let baseHue = 0.54; // azul andoriano
+          if (tri.kind === 'wing') baseHue = 0.77 + Math.sin(time * 0.5) * 0.08; // violeta/magenta
+          if (tri.kind === 'canopy') baseHue = 0.11; // âmbar dourado
+          if (tri.kind === 'nacelle') baseHue = 0.5; // ciano andoriano vivo
+
+          const faceColor = hsl(baseHue, 82, Math.round(48 + lum * 32), 0.96);
+
+          for (let y = minY; y <= maxY; y++) {
+            for (let x = minX; x <= maxX; x++) {
+              const w0 =
+                (p1[0] - p0[0]) * (y - p0[1]) - (p1[1] - p0[1]) * (x - p0[0]);
+              const w1 =
+                (p2[0] - p1[0]) * (y - p1[1]) - (p2[1] - p1[1]) * (x - p1[0]);
+              const w2 =
+                (p0[0] - p2[0]) * (y - p2[1]) - (p0[1] - p2[1]) * (x - p2[0]);
+
+              if (
+                (w0 >= 0 && w1 >= 0 && w2 >= 0) ||
+                (w0 <= 0 && w1 <= 0 && w2 <= 0)
+              ) {
+                const b0 = Math.abs(w1 / area);
+                const b1 = Math.abs(w2 / area);
+                const b2 = Math.abs(w0 / area);
+                const invZ = b0 * p0[2] + b1 * p1[2] + b2 * p2[2];
+                putCell(x, y, invZ, glyph, faceColor);
+              }
+            }
+          }
+
+          // Realce wireframe nas bordas da nave
+          const edgeColor =
+            tri.kind === 'nacelle'
+              ? 'rgba(130, 245, 255, 0.98)'
+              : 'rgba(245, 241, 230, 0.82)';
+          drawLine3D(p0, p1, '+', edgeColor);
+          drawLine3D(p1, p2, '+', edgeColor);
+        }
+
+        // Canhões nas pontas das asas (detalhe clássico de caça espacial)
+        const wingTips: Array<[number, number]> = [
+          [13, 14],
+          [17, 18],
+          [21, 22],
+          [25, 26],
+        ];
+        for (const [tipA] of wingTips) {
+          const cannonStart = projected[tipA];
+          const tipLocal = transformed[tipA];
+          const noseDir = rotatePoint([0, 0, 0.75], yaw, pitch, roll);
+          const cannonEnd = project(
+            [
+              tipLocal[0] + noseDir[0],
+              tipLocal[1] + noseDir[1],
+              tipLocal[2] + noseDir[2],
+            ],
+            shipCenterX,
+            shipCenterY,
+            scale
+          );
+          drawLine3D(cannonStart, cannonEnd, '-', 'rgba(255, 196, 112, 0.95)');
+        }
+
+        // Desenha o buffer final no canvas
+        ctx.clearRect(0, 0, width, height);
+        for (let r = 0; r < rows; r++) {
+          const py = r * cellH + cellH * 0.5;
+          for (let c = 0; c < cols; c++) {
+            const idx = r * cols + c;
+            const ch = charBuf[idx];
+            if (ch === ' ') continue;
+            ctx.fillStyle = colorBuf[idx];
+            ctx.fillText(ch, c * cellW + cellW * 0.5, py);
+          }
+        }
+      };
+
+      const loop = (now: number) => {
+        if (isPaused) {
+          rafId = undefined;
+          return;
+        }
+
+        const dt = Math.min(0.05, (now - lastFrameTime) / 1000 || 0.016);
+        if (now - lastFrameTime >= 33) {
+          lastFrameTime = now;
+          time += dt * (1 + warpBoost * 1.5);
+          renderFrame(dt);
+        }
+
+        rafId = window.requestAnimationFrame(loop);
+      };
+
+      const updateButton = () => {
+        toggleBtn.textContent = isPaused ? '[ animar ]' : '[ pausar ]';
+      };
+
+      const start = () => {
+        if (rafId !== undefined) return;
+        lastFrameTime = performance.now();
+        rafId = window.requestAnimationFrame(loop);
+      };
+
+      const stop = () => {
+        if (rafId !== undefined) {
+          window.cancelAnimationFrame(rafId);
+          rafId = undefined;
+        }
+        renderFrame(0);
+      };
+
+      toggleBtn.addEventListener('click', () => {
+        isPaused = !isPaused;
+        updateButton();
+        if (isPaused) stop();
+        else start();
+      });
+
+      stageEl.addEventListener('pointermove', (e) => {
+        const rect = stageEl.getBoundingClientRect();
+        pointerX = ((e.clientX - rect.left) / Math.max(1, rect.width) - 0.5) * 2;
+        pointerY = ((e.clientY - rect.top) / Math.max(1, rect.height) - 0.5) * 2;
+      });
+
+      stageEl.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement | null)?.closest('.ascii-brand-link')) {
+          return;
+        }
+        if (!isPaused) warpBoost = 1;
+      });
+
+      motionQuery.addEventListener('change', (e) => {
+        isPaused = e.matches;
+        updateButton();
+        if (isPaused) stop();
+        else start();
+      });
+
+      const ro = new ResizeObserver(resize);
+      ro.observe(stageEl);
+
+      updateButton();
+      resize();
+      if (!isPaused) start();
+    }
+  }
+</script>
