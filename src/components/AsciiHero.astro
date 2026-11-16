@@ -53,7 +53,8 @@ const isHome = activePage === 'home';
 
     <div class="hud-top" aria-hidden="true">
       <span>+--- SECTOR // ANDORIA-04</span>
-      <span class="hud-hint">mova o cursor para pilotar</span>
+      <span class="hud-hint hud-hint-pointer">mova o cursor para pilotar</span>
+      <span class="hud-hint hud-hint-touch">toque para dobra espacial</span>
     </div>
 
     <div class="ascii-brand">
@@ -98,6 +99,9 @@ const isHome = activePage === 'home';
   }
 
   .prompt {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-size);
     color: var(--ink-primary);
     font-weight: 600;
     text-decoration: none;
@@ -186,6 +190,15 @@ const isHome = activePage === 'home';
     box-shadow: 4px 4px 0 var(--border-ink);
     overflow: hidden;
     cursor: crosshair;
+    touch-action: pan-y;
+  }
+
+  @media (max-width: 600px) {
+    .ascii-stage {
+      min-block-size: 13.5rem;
+      padding: 0.75rem 0.85rem 0.85rem;
+      box-shadow: 3px 3px 0 var(--border-ink);
+    }
   }
 
   .ascii-canvas {
@@ -213,6 +226,20 @@ const isHome = activePage === 'home';
 
   .hud-hint {
     color: rgba(212, 168, 255, 0.62);
+  }
+
+  .hud-hint-touch {
+    display: none;
+  }
+
+  @media (pointer: coarse) {
+    .hud-hint-pointer {
+      display: none;
+    }
+
+    .hud-hint-touch {
+      display: inline;
+    }
   }
 
   .ascii-brand {
@@ -577,9 +604,10 @@ const isHome = activePage === 'home';
         smoothY += (pointerY - smoothY) * 0.08;
         warpBoost = Math.max(0, warpBoost - dt * 1.6);
 
-        const shipCenterX = cols * (width >= 600 ? 0.6 : 0.54);
-        const shipCenterY = rows * 0.48;
-        const scale = Math.min(cols * 1.35, rows * 2.9);
+        const isCompact = width < 600;
+        const shipCenterX = cols * (isCompact ? 0.56 : 0.6);
+        const shipCenterY = rows * (isCompact ? 0.38 : 0.48);
+        const scale = Math.min(cols * (isCompact ? 1.25 : 1.35), rows * 2.8);
 
         // 1. Nebulosa psicodélica sutil nos cantos/ondas (mantendo bom espaço escuro)
         for (let r = 0; r < rows; r++) {
